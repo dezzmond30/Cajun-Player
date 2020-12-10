@@ -1,41 +1,55 @@
-// constants won't change. Used here to set a pin number:
-const int ledPin =  LED_BUILTIN;// the number of the LED pin
 
-// Variables will change:
-int ledState = LOW;             // ledState used to set the LED
+  // sets the Solenoid pin on arduino
+const int solPin =  13;          
 
-// Generally, you should use "unsigned long" for variables that hold time
-// The value will quickly become too large for an int to store
-unsigned long previousMillis = 0;        // will store last time LED was updated
+  // solState used to set the Solenoid
+int solState = LOW;             
 
-// constants won't change:
-const long interval = 1000;           // interval at which to blink (milliseconds)
+  // will store last time Solenoid was updated
+unsigned long previousMillis = 0;        
+
+  // interval at which to blink (milliseconds)
+const long interval = 3000;
+
+  // contact struct
+struct Contact
+{
+  int solState; // state of Solenoid
+  int duration_ms; // duration of contact in milliseconds
+
+};
+
+  // define each contact type
+Contact shortTap = { 1, 100 };
+Contact longTap = { 1, 200 };
+Contact shortPause = { 0, 100};
+Contact longPause = { 0, 200};
+  
+  // define sequence
+Contact seq[] = { shortTap, shortPause, shortTap, longPause, longTap, shortPause, shortTap, shortPause, shortTap, shortPause };
 
 void setup() {
+  
   // set the digital pin as output:
-  pinMode(ledPin, OUTPUT);
+  pinMode(solPin, OUTPUT);
+
 }
 
 void loop() {
-  // here is where you'd put code that needs to be running all the time.
 
-  // check to see if it's time to blink the LED; that is, if the difference
-  // between the current time and last time you blinked the LED is bigger than
-  // the interval at which you want to blink the LED.
-  unsigned long currentMillis = millis();
-
-  if (currentMillis - previousMillis >= interval) {
-    // save the last time you blinked the LED
-    previousMillis = currentMillis;
-
-    // if the LED is off turn it on and vice-versa:
-    if (ledState == LOW) {
-      ledState = HIGH;
-    } else {
-      ledState = LOW;
+    // store sequence length
+  int seqLen = sizeof(seq) / sizeof(seq[0]);
+  
+    //Play sequence
+  for(int i = 0; i<seqLen; i++)
+  {
+      // store current time
+    unsigned long currentMillis = millis();
+      // compares current time with last recorded time that Solenoid was updated
+    if (currentMillis - previousMillis >= seq[i].duration_ms) {
+        // set the Solenoid with the solState of the Contact
+      digitalWrite(solPin, seq[i].solState);
+      previousMillis = currentMillis;
     }
-
-    // set the LED with the ledState of the variable:
-    digitalWrite(ledPin, ledState);
   }
 }
