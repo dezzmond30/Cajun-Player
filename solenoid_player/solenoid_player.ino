@@ -3,19 +3,18 @@
 const int solPin =  13;          
 
   // solState used to set the Solenoid
-int solState = LOW;             
+int solState = 0;             
 
   // will store last time Solenoid was updated
-unsigned long previousMillis = 0;        
-
-  // interval at which to blink (milliseconds)
-const long interval = 3000;
+unsigned long previousMillis = 0;
 
   // contact struct
 struct Contact
 {
-  int solState; // state of Solenoid
-  int duration_ms; // duration of contact in milliseconds
+    // state of Solenoid
+  int solState;
+    // duration of contact in milliseconds
+  int duration_ms; 
 
 };
 
