@@ -1,54 +1,134 @@
+const int invalidIndex = -1;
 
-  // sets the Solenoid pin on arduino
-const int solPin =  13;          
+// Channel 1 variables
+const int ch1_pin =  13; // channel 1 solenoid pin on arduino
+unsigned long ch1_lastStepMillis_ms = 0; // timestamp for last step on channel 1
+int ch1_currentIndex = invalidIndex; // current step being played. invalidIndex specifies that the sequence is not being played
 
-  // solState used to set the Solenoid
-int solState = 0;             
+// Channel 2 variables
+const int ch2_pin =  14; // channel 2 solenoid pin on arduino
+unsigned long ch2_lastStepMillis_ms = 0; // entry  timestamp for last step on channel 2
+int ch2_currentIndex = invalidIndex; // current step being played. invalidIndex specifies that the sequence is not being played
 
-  // will store last time Solenoid was updated
-unsigned long previousMillis = 0;
-
-  // contact struct
 struct Contact
 {
-    // state of Solenoid
+  // State of Solenoid, 0 = deactive, 1 = active
   int solState;
-    // duration of contact in milliseconds
+  // Duration of state in milliseconds
   int duration_ms; 
-
 };
 
-  // define each contact type
-Contact shortTap = { 1, 100 };
-Contact longTap = { 1, 200 };
-Contact shortPause = { 0, 100};
-Contact longPause = { 0, 200};
+// Define each contact type
+Contact shortTap = { HIGH, 100 };
+Contact longTap = { HIGH, 200 };
+Contact shortPause = { LOW, 100};
+Contact longPause = { LOW, 200};
   
-  // define sequence
-Contact seq[] = { shortTap, shortPause, shortTap, longPause, longTap, shortPause, shortTap, shortPause, shortTap, shortPause };
+// Define sequence for channel 1
+Contact ch1_seq[] = { shortTap, shortPause, shortTap, longPause, longTap, shortPause, shortTap, shortPause, shortTap, shortPause };
+const int ch1_seqLen = sizeof(ch1_seq) / sizeof(Contact);
 
-void setup() {
-  
-  // set the digital pin as output:
-  pinMode(solPin, OUTPUT);
+// Define sequence for channel 2
+Contact ch2_seq[] = { shortTap, shortPause, shortTap, longPause, longTap, shortPause, shortTap, shortPause, shortTap, shortPause };
+const int ch2_seqLen = sizeof(ch2_seq) / sizeof(Contact);
 
+// Button variables
+const int btnPin = 15;
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("Starting Cojun player");
+  // Set the digital pins for solenoids as output
+  pinMode(ch1_pin, OUTPUT);
+  pinMode(ch2_pin, OUTPUT);
+
+  // Set the button pin
+  pinMode(btnPin, INPUT);
 }
 
-void loop() {
+void loop()
+{
+  // Store current milliseconds
+  unsigned long currentMillis = millis();
 
-    // store sequence length
-  int seqLen = sizeof(seq) / sizeof(seq[0]);
-  
-    //Play sequence
-  for(int i = 0; i<seqLen; i++)
+  // Handle button
+  if(digitalRead(btnPin) == 1)
   {
-      // store current time
-    unsigned long currentMillis = millis();
-      // compares current time with last recorded time that Solenoid was updated
-    if (currentMillis - previousMillis >= seq[i].duration_ms) {
-        // set the Solenoid with the solState of the Contact
-      digitalWrite(solPin, seq[i].solState);
-      previousMillis = currentMillis;
+    // Button is pressed, reset channel variables and return
+    Serial.println("Button pressed");
+
+    // Deactivating solenoids
+    digitalWrite(ch1_pin, LOW);
+    digitalWrite(ch2_pin, LOW);
+
+    ch1_currentIndex = 0;
+    ch1_lastStepMillis_ms = currentMillis;
+    ch2_currentIndex = 0;
+    ch2_lastStepMillis_ms = currentMillis;
+
+    return; // To prevent starting the sequence before releasing the button
+  }
+ 
+  // Handle channel 1
+  if(ch1_currentIndex >= ch1_seqLen)
+  {
+    // Channel 1 sequence is finished, set current index to invalid state and deactivate solenoid
+    Serial.println("Channel 1 sequence finished");
+    ch1_currentIndex = invalidIndex;
+    digitalWrite(ch1_pin, LOW);
+  }
+
+  if(ch1_currentIndex != invalidIndex)
+  {
+    // Channel 1 sequence is being played
+
+    // Set correct pin state without condition
+    digitalWrite(ch1_pin, ch1_seq[ch1_currentIndex].solState);
+
+    unsigned long ch1_currentStateTimeout = ch1_lastStepMillis_ms + ch1_seq[ch1_currentIndex].duration_ms;
+    if(ch1_currentStateTimeout >= currentMillis)
+    {
+      // Current step finished
+      ch1_currentIndex++;
+
+      if(ch1_currentIndex < ch1_seqLen)
+      {
+        Serial.print("Sequence 1 going to step ")
+        Serial.println(ch1_currentIndex);
+        ch1_lastStepMillis_ms = currentMillis;
+      }
+    }
+
+ 
+  // Handle channel 2
+  if(ch2_currentIndex >= ch2_seqLen)
+  {
+    // Channel 2 sequence is finished, set current index to invalid state and deactivate solenoid
+    Serial.println("Channel 2 sequence finished");
+    ch2_currentIndex = invalidIndex;
+    digitalWrite(ch2_pin, LOW);
+  }
+
+  if(ch2_currentIndex != invalidIndex)
+  {
+    // Channel 2 sequence is being played
+
+    // Set correct pin state without condition
+    digitalWrite(ch2_pin, ch2_seq[ch2_currentIndex].solState);
+
+    unsigned long ch2_currentStateTimeout = ch2_lastStepMillis_ms + ch2_seq[ch2_currentIndex].duration_ms;
+    if(ch2_currentStateTimeout >= currentMillis)
+    {
+      // Current step finished
+      ch2_currentIndex++;
+
+      if(ch2_currentIndex < ch1_seqLen)
+      {
+        Serial.print("Sequence 2 going to step ")
+        Serial.println(ch2_currentIndex);
+        ch2_lastStepMillis_ms = currentMillis;
+      }
     }
   }
 }
