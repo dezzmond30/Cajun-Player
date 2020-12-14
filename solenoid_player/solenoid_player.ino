@@ -19,17 +19,17 @@ struct Contact
 };
 
 // Define each contact type
-Contact shortTap = { HIGH, 50 };
-Contact longTap = { HIGH, 400 };
-Contact shortPause = { LOW, 50};
-Contact longPause = { LOW, 400};
+Contact shortTap = { HIGH, 75 };
+Contact longTap = { HIGH, 150 };
+Contact shortPause = { LOW, 75};
+Contact longPause = { LOW, 150 };
   
 // Define sequence for channel 1
-Contact ch1_seq[] = { shortTap, shortPause, shortTap, shortPause, longTap, longPause, longTap, longPause, shortTap, shortPause };
+Contact ch1_seq[] = { shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, longPause, longPause, longPause, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause };
 const int ch1_seqLen = sizeof(ch1_seq) / sizeof(Contact);
 
 // Define sequence for channel 2
-Contact ch2_seq[] = { longTap, longPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, longTap, longPause, longTap, longPause };
+Contact ch2_seq[] = { longTap, longPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, longPause, longTap, longPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, longPause };
 const int ch2_seqLen = sizeof(ch2_seq) / sizeof(Contact);
 
 // Button variables
