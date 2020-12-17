@@ -19,17 +19,55 @@ struct Contact
 };
 
 // Define each contact type
-Contact shortTap = { HIGH, 75 };
-Contact longTap = { HIGH, 150 };
-Contact shortPause = { LOW, 75};
-Contact longPause = { LOW, 150 };
+Contact tap90 = { HIGH, 90 }; // Short Tap
+Contact tap110 = { HIGH, 110 }; // Long Tap
+
+
+Contact pause715 = { LOW, 715};
+Contact pause560 = { LOW, 560};
+Contact pause510 = { LOW, 510};
+Contact pause500 = { LOW, 500};
+Contact pause490 = { LOW, 500};
+Contact pause450 = { LOW, 450};
+Contact pause420 = { LOW, 450};
+Contact pause410 = { LOW, 410};
+Contact pause400 = { LOW, 400};
+Contact pause350 = { LOW, 320};
+Contact pause320 = { LOW, 320};
+Contact pause245 = { LOW, 245};
+Contact pause170 = { LOW, 170 };
+Contact pause150 = { LOW, 150 };
+Contact pause135 = { LOW, 135 };
+Contact pause115 = { LOW, 115 };
   
 // Define sequence for channel 1
-Contact ch1_seq[] = { shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, longPause, longPause, longPause, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause };
+Contact ch1_seq[] = { 
+  tap110, pause400, 
+  pause500, 
+  tap110, pause450, 
+  pause410, 
+  tap110, pause135, 
+  pause715, 
+  tap110, pause400, 
+  pause490 
+  };
+  
 const int ch1_seqLen = sizeof(ch1_seq) / sizeof(Contact);
 
 // Define sequence for channel 2
-Contact ch2_seq[] = { longTap, longPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, longPause, longTap, longPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, shortPause, longTap, longPause, shortTap, shortPause, shortTap, shortPause, shortTap, longPause };
+Contact ch2_seq[] = { 
+  pause510, 
+  tap90, pause150, 
+  tap90, pause170, 
+  pause560, 
+  tap90, pause320, 
+  pause245, 
+  tap90, pause400, 
+  tap90, pause135, 
+  pause510, 
+  tap90, pause400 
+  };
+  
 const int ch2_seqLen = sizeof(ch2_seq) / sizeof(Contact);
 
 // Button variables
